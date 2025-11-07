@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini AI ChatBot (Local)</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for chat messages */
+        #chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: #9ca3af #e5e7eb; /* thumb track */
+        }
+        #chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-messages::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 4px;
+        }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: #9ca3af;
+            border-radius: 4px;
+            border: 2px solid #e5e7eb;
+        }
+
+        /* Animation for the typing cursor */
+        @keyframes fade-in-out {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 1; }
+        }
+        .typing-cursor {
+          animation: fade-in-out 1s infinite;
+          display: inline-block;
+          font-weight: bold;
+          color: #64748b; /* Make it a bit dimmer than text */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Main Chatbot View -->
+    <div id="chat-view" class="bg-white w-screen h-dvh flex flex-col overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-4 text-center relative">
+            <h1 class="text-xl font-semibold">Mini JS Bot</h1>
+            <p class="text-sm opacity-90">Running 100% in your browser!</p>
+            
+            <!-- NEW: Button to open the trainer -->
+            <button id="open-trainer-btn" class="absolute top-2 right-2 bg-white/20 hover:bg-white/30 text-white text-xs font-bold py-1 px-3 rounded-full transition-colors">
+                Train Bot
+            </button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Example Bot Message -->
+            <div class="flex justify-start">
+                <div class="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-xs shadow">
+                    Hello! I'm a simple JavaScript bot. What's up?
+                </div>
+            </div>
+            <!-- Messages will be added here by JavaScript -->
+        </div>
+        
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="p-4 hidden">
+            <div class="flex justify-start items-center space-x-2">
+                <div class="bg-gray-200 rounded-lg p-3 inline-block">
+                    <!-- Show "Thinking..." text -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-600 font-medium">Thinking...</span>
+                        <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+                        <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                        <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-gray-100 border-t border-gray-200">
+            <form id="chat-form" class="flex items-center space-x-2">
+                <input 
+                    type="text" 
+                    id="message-input" 
+                    placeholder="Type your message..." 
+                    autocomplete="off"
+                    class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <button 
+                    type="submit" 
+                    class="bg-blue-600 text-white p-3 rounded-lg shadow hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L6 12Zm0 0h12.75" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEW: Trainer Modal (hidden by default) -->
+    <div id="trainer-modal" class="hidden fixed inset-0 bg-gray-900/50 flex items-center justify-center p-4 z-50">
+        
+        <!-- This is the trainer card from chatbot_trainer.html -->
+        <div class="w-full max-w-2xl bg-white p-6 rounded-lg shadow-lg relative">
+            
+            <!-- NEW: Close Button -->
+            <button id="close-trainer-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">ChatBot Trainer</h1>
+
+            <!-- Form for adding data -->
+            <form id="trainer-form" class="space-y-4">
+                <div>
+                    <label for="keyword-input" class="block text-sm font-medium text-gray-700">
+                        When the User Says (Keyword):
+                    </label>
+                    <input 
+                        type="text" 
+                        id="keyword-input" 
+                        placeholder="e.g., hello"
+                        required
+                        class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                <div>
+                    <label for="response-input" class="block text-sm font-medium text-gray-700">
+                        The Bot Responds (Response):
+                    </label>
+                    <input 
+                        type="text" 
+                        id="response-input" 
+                        placeholder="e.g., Hi there! How are you?"
+                        required
+                        class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white p-3 rounded-lg shadow font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Add Training Data
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <hr class="my-6 border-gray-200">
+
+            <!-- Output section -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold text-gray-800">
+                        Copyable `trainedData` (Paste this into the code):
+                    </h2>
+                    <button 
+                        id="clear-button" 
+                        class="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                        Clear
+                    </button>
+                </div>
+                
+                <textarea 
+                    id="output-data" 
+                    readonly
+                    class="w-full h-72 p-4 bg-gray-900 text-green-400 font-mono text-sm rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="{
+    // Your generated data will appear here...
+}"
+                ></textarea>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript for Chat Logic -->
+    <script>
+        // === START OF CHATBOT SCRIPT ===
+
+        // --- START OF TRAINED DATA ---
+        // This is where you can "train" the bot.
+        // Add new keywords and one or more responses.
+        const trainedData = {
+            "hello": ["Hi there! How are you?", "Hello! Nice to see you.", "Hey! What's up?"],
+            "hi": ["Hi there! How are you?", "Hello! Nice to see you.", "Hey! What's up?"],
+            "how are you": ["I'm just some JavaScript code, but I'm feeling great!", "I'm running perfectly, thanks for asking!", "Feeling 100% functional!"],
+            "your name": ["I am the Mini JS Bot!", "You can call me the Mini JS Bot.", "My name is Mini JS Bot!"],
+            "what can you do": ["I can chat about simple topics.", "I'm great at responding to keywords like 'joke' or 'weather'!", "I can hold a simple conversation."],
+            "joke": [
+                "Why don't scientists trust atoms? Because they make up everything!",
+                "What do you call a fake noodle? An impasta!",
+                "Why did the scarecrow win an award? Because he was outstanding in his field!"
+            ],
+            "weather": [
+                "I'm not connected to the internet, so I can't check the weather!",
+                "I can't check the forecast, sorry! I'm an offline bot.",
+                "I wish I knew the weather, but I'm stuck in this browser!"
+            ],
+            "age": [
+                "I was just coded, so I'm brand new!",
+                "In digital time, I'm just a few moments old.",
+                "Age is just a number, but mine is very, very small!"
+            ],
+            "old are you": [
+                "I was just coded, so I'm brand new!",
+                "In digital time, I'm just a few moments old.",
+                "Age is just a number, but mine is very, very small!"
+            ],
+            "color": [
+                "My favorite color is blue, like the chat bubbles!",
+                "I'm a big fan of the color #3B82F6, which is a nice blue.",
+                "I like digital colors, like the ones you see on this screen!"
+            ],
+            "cool": ["Thanks!", "You're awesome too!", "Glad you think so!"],
+            "awesome": ["Thanks!", "You're awesome too!", "Glad you think so!"],
+            "bye": ["Goodbye! Have a great day!", "See you later!", "Bye! Talk soon!"]
+        };
+
+        // Default responses for when no keyword is matched.
+        const defaultResponses = [
+            "That's interesting! Tell me more.",
+            "I see. What else?",
+            "Fascinating. Go on.",
+            "Hmm, I'm not sure what to say to that.",
+            "Please continue!"
+        ];
+        // --- END OF TRAINED DATA ---
+
+
+        // Get Chatbot DOM elements
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        /**
+         * Adds a message to the chat interface.
+         */
+        function addMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('flex');
+
+            if (sender === 'user') {
+                messageDiv.classList.add('justify-end');
+                messageDiv.innerHTML = `
+                    <div class="bg-blue-600 text-white p-3 rounded-lg max-w-xs shadow">
+                        ${message}
+                    </div>
+                `;
+            } else {
+                console.warn("addMessage 'bot' is deprecated. Use createAndTypeMessage.");
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        /**
+         * Handles the chat form submission.
+         */
+        function handleChatSubmit(event) {
+            event.preventDefault();
+            const userMessage = messageInput.value.trim();
+            if (!userMessage) return; 
+
+            addMessage('user', userMessage);
+            messageInput.value = '';
+            
+            loadingIndicator.classList.remove('hidden');
+            chatMessages.scrollTop = chatMessages.scrollHeight; 
+            
+            const aiResponse = getLocalAIResponse(userMessage);
+
+            setTimeout(() => {
+                loadingIndicator.classList.add('hidden');
+                createAndTypeMessage(aiResponse);
+            }, 750); 
+        }
+
+        /**
+         * Helper function to create the bubble and start typing.
+         */
+        function createAndTypeMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('flex', 'justify-start');
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('p-3', 'rounded-lg', 'max-w-xs', 'shadow', 'bg-gray-200', 'text-gray-800');
+            
+            bubbleDiv.innerHTML = '<span class="text-content"></span><span class="typing-cursor" style="display: none;">•</span>';
+
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const textElement = bubbleDiv.querySelector('.text-content');
+            const cursorElement = bubbleDiv.querySelector('.typing-cursor');
+
+            typeMessage(textElement, cursorElement, text);
+        }
+
+        /**
+         * Types out a message one WORD at a time.
+         */
+        function typeMessage(textElement, cursorElement, message) {
+            const words = message.split(' ');
+            let currentWordIndex = 0;
+            cursorElement.style.display = 'inline-block'; 
+
+            function typeWord() {
+                if (currentWordIndex < words.length) {
+                    textElement.textContent += (currentWordIndex > 0 ? ' ' : '') + words[currentWordIndex];
+                    currentWordIndex++;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    let delay = 150 + Math.random() * 100; 
+                    if (Math.random() < 0.02) { 
+                        delay *= 2;
+                    }
+                    setTimeout(typeWord, delay);
+                } else {
+                    cursorElement.style.display = 'none';
+                }
+            }
+            typeWord();
+        }
+
+        /**
+         * Selects a random response from an array.
+         */
+        function getRandomResponse(responses) {
+            const index = Math.floor(Math.random() * responses.length);
+            return responses[index];
+        }
+
+        /**
+         * Generates a response from our simple JavaScript "AI".
+         */
+        function getLocalAIResponse(message) {
+            const lowerCaseMessage = message.toLowerCase();
+
+            for (const keyword in trainedData) {
+                if (lowerCaseMessage.includes(keyword)) {
+                    const responses = trainedData[keyword];
+                    return getRandomResponse(responses);
+                }
+            }
+            return getRandomResponse(defaultResponses);
+        }
+
+        // Attach Chatbot event listener
+        chatForm.addEventListener('submit', handleChatSubmit);
+        
+        // Focus the input field on load
+        messageInput.focus();
+
+        // === END OF CHATBOT SCRIPT ===
+
+
+        // === START OF TRAINER SCRIPT ===
+
+        // This object will store the data as we build it
+        // It's initialized as empty and will be filled when the modal opens.
+        let currentTrainingData = {};
+
+        // Get Trainer DOM elements
+        const trainerForm = document.getElementById('trainer-form');
+        const keywordInput = document.getElementById('keyword-input');
+        const responseInput = document.getElementById('response-input');
+        const outputData = document.getElementById('output-data');
+        const clearButton = document.getElementById('clear-button');
+
+        /**
+         * Handles the form submission to add new training data.
+         */
+        function handleAddData(event) {
+            event.preventDefault(); 
+            const keyword = keywordInput.value.trim().toLowerCase();
+            const response = responseInput.value.trim();
+
+            if (!keyword || !response) {
+                alert("Please fill out both fields.");
+                return;
+            }
+
+            if (!currentTrainingData[keyword]) {
+                currentTrainingData[keyword] = [];
+            }
+
+            if (!currentTrainingData[keyword].includes(response)) {
+                currentTrainingData[keyword].push(response);
+            }
+
+            updateOutput();
+
+            keywordInput.value = '';
+            responseInput.value = '';
+            keywordInput.focus();
+        }
+
+        /**
+         * Updates the <textarea> with a formatted string of the current data.
+         */
+        function updateOutput() {
+            // JSON.stringify with 'null, 4' pretty-prints the JSON
+            const outputString = JSON.stringify(currentTrainingData, null, 4);
+            outputData.value = outputString;
+        }
+
+        /**
+         * Clears the stored data and the output text area.
+         */
+        function handleClearData() {
+            if (confirm("Are you sure you want to clear all the data in the trainer?")) {
+                currentTrainingData = {};
+                updateOutput();
+            }
+        }
+
+        // Attach Trainer event listeners
+        trainerForm.addEventListener('submit', handleAddData);
+        clearButton.addEventListener('click', handleClearData);
+
+        // === END OF TRAILER SCRIPT ===
+
+
+        // === START OF MODAL SCRIPT ===
+        
+        // Get Modal DOM elements
+        const openTrainerBtn = document.getElementById('open-trainer-btn');
+        const closeTrainerBtn = document.getElementById('close-trainer-btn');
+        const trainerModal = document.getElementById('trainer-modal');
+
+        // Open Modal
+        openTrainerBtn.addEventListener('click', () => {
+            // Load the *current* chatbot data into the trainer
+            // We use JSON.parse/stringify to create a deep copy
+            currentTrainingData = JSON.parse(JSON.stringify(trainedData));
+            
+            // Update the textarea with this data
+            updateOutput();
+            
+            // Show the modal
+            trainerModal.classList.remove('hidden');
+        });
+
+        // Close Modal
+        closeTrainerBtn.addEventListener('click', () => {
+            trainerModal.classList.add('hidden');
+        });
+
+        // === END OF MODAL SCRIPT ===
+    </script>
+</body>
+</html>
