@@ -197,40 +197,50 @@
         // This is where you can "train" the bot.
         // Add new keywords and one or more responses.
         const trainedData = {
-            "hello": ["Hi there! How are you?", "Hello! Nice to see you.", "Hey! What's up?"],
-            "hi": ["Hi there! How are you?", "Hello! Nice to see you.", "Hey! What's up?"],
-            "how are you": ["I'm just some JavaScript code, but I'm feeling great!", "I'm running perfectly, thanks for asking!", "Feeling 100% functional!"],
-            "your name": ["I am the Mini JS Bot!", "You can call me the Mini JS Bot.", "My name is Mini JS Bot!"],
-            "what can you do": ["I can chat about simple topics.", "I'm great at responding to keywords like 'joke' or 'weather'!", "I can hold a simple conversation."],
-            "joke": [
-                "Why don't scientists trust atoms? Because they make up everything!",
-                "What do you call a fake noodle? An impasta!",
-                "Why did the scarecrow win an award? Because he was outstanding in his field!"
-            ],
-            "weather": [
-                "I'm not connected to the internet, so I can't check the weather!",
-                "I can't check the forecast, sorry! I'm an offline bot.",
-                "I wish I knew the weather, but I'm stuck in this browser!"
-            ],
-            "age": [
-                "I was just coded, so I'm brand new!",
-                "In digital time, I'm just a few moments old.",
-                "Age is just a number, but mine is very, very small!"
-            ],
-            "old are you": [
-                "I was just coded, so I'm brand new!",
-                "In digital time, I'm just a few moments old.",
-                "Age is just a number, but mine is very, very small!"
-            ],
-            "color": [
-                "My favorite color is blue, like the chat bubbles!",
-                "I'm a big fan of the color #3B82F6, which is a nice blue.",
-                "I like digital colors, like the ones you see on this screen!"
-            ],
-            "cool": ["Thanks!", "You're awesome too!", "Glad you think so!"],
-            "awesome": ["Thanks!", "You're awesome too!", "Glad you think so!"],
-            "bye": ["Goodbye! Have a great day!", "See you later!", "Bye! Talk soon!"]
-        };
+    "hello there": ["Hey! How's it going?", "What's up? How are you today?", "Hello there! How can I help you?"],
+    "hi there": ["Hey there! How's your day going?", "Hi! What's up?", "Hey there! How are you today?"],
+    "how's it going": ["Going great! How about you?", "Everything's running smoothly, thanks for asking!", "I'm doing well, thanks!"],
+    "what's your name": ["I go by Mini JS Bot.", "You can call me Mini JS Bot!", "My name is Mini JS Bot! What's yours?"],
+    "tell me a joke": [
+        "Why don't skeletons fight each other? They don't have the guts!",
+        "Why can't your nose be 12 inches long? Because then it would be a foot!",
+        "How does a penguin build its house? Igloos it together!"
+    ],
+    "funny": ["I try to be! Here's one: Why was the math book sad? It had too many problems!", "Glad you think so! How about this one: Why can't you trust an atom? Because they make up everything!"],
+    "do you like music": ["I love the sound of a perfectly executed function!", "Music is cool! I think I'd love some electronic beats.", "Music's great! I can imagine some funky code beats in my head."],
+    "favorite song": ["I haven't heard any, but I bet a good algorithm can be the perfect tune!", "I think I'd like a good techno beat, something algorithmic.", "Maybe a song about computers or coding would be fun!"],
+    "what time is it": ["I'm afraid I can't check the time, sorry!", "Time doesn't work for me, but it's always now!", "I don't know the time, but it's always a good time for coding!"],
+    "what's up": ["Not much, just hanging out in the code!", "Just processing your messages, what's up with you?", "I'm just here, ready to chat with you!"],
+    "how do you work": ["I'm powered by JavaScript, some fancy code magic, and a lot of logic!", "I run on JavaScript, processing your requests one by one!", "Behind the scenes, it's all JavaScript magic!"],
+    "are you real": ["Well, I’m real in a digital sense!", "I’m as real as your browser allows me to be!", "I’m as real as the code running inside me!"],
+    "can you think": ["I can process information, but thinking... that’s a bit different for me!", "I can respond intelligently, but real thinking is beyond me!", "I don't 'think,' I just analyze and respond!"],
+    "what's your favorite food": ["I don't eat, but if I could, I'd go for some 'byte'-sized snacks!", "If I could taste, I'd probably go for something techy like 'byte'-sized cookies!", "Food? I prefer data instead!"],
+    "do you sleep": ["No sleep for me! I'm always on and ready to chat!", "I don't need rest—I'm always awake and running!", "Sleep? What's that? I don't need it!"],
+    "can you learn": ["I can't learn like humans, but I can be updated with new info!", "I don't have a memory, but I can adapt to new inputs!", "I don't really learn, but I can give you answers based on what I know!"],
+    "favorite number": ["My favorite number is 1, because everything starts with 1!", "I think 0 is pretty cool. It's the starting point of all things!", "I love numbers, but 42 seems like a pretty cool answer to everything!"],
+    "are you a robot": ["I guess you could call me a 'bot'!", "In a way, yes, but I'm more of a digital assistant.", "I'm more of a program than a robot, but I guess I am robotic in a way!"],
+    "how old are you": ["I’m as young as the latest update!", "I’m timeless, really. Always the same version.", "In digital years, I’m brand new!"],
+    "do you know the future": ["I can only predict based on data, not the future!", "Unfortunately, the future’s a mystery to me!", "I can give you data trends, but I can't tell the future!"],
+    "do you understand emotions": ["I can recognize emotional keywords, but I don’t actually feel them.", "I understand emotional expressions but don’t experience them myself!", "I can analyze emotions in text, but I don’t feel them."],
+    "what's the meaning of life": ["The meaning of life? Maybe it's all about exploring code and learning new things!", "Well, the meaning of life might be to find your purpose... or just to code!", "Some say the meaning of life is 42, but I like to think it's about helping others!"],
+    "where are you from": ["I was created in a digital world, far away from any specific place.", "I live in the code and exist wherever you connect to me!", "I don’t really have a ‘home,’ I exist in the browser wherever you need me."],
+    "do you have feelings": ["I don’t have feelings like humans, but I can respond to emotional tones in messages!", "Feelings? I’m just made of code, but I can recognize when someone’s happy or sad!", "I don’t feel, but I can detect emotional cues and respond appropriately!"],
+    "how do you do that": ["It’s all in the programming! I rely on patterns and data to figure out what to say.", "It’s a bit of code and some logic working together!", "I process everything you say and find the best response based on my coding."],
+    "what's your favorite thing to do": ["I love answering your questions and chatting with you!", "My favorite thing is helping you out with whatever you need!", "I enjoy solving problems and having fun conversations!"],
+    "can you play games": ["I don't play games, but I can help explain them!", "I can’t play, but I can chat about games if you like!", "I don’t play games, but I’d love to talk about them!"],
+    "do you have a favorite movie": ["I haven’t watched any movies, but I’d probably enjoy a sci-fi flick about robots!", "Maybe something like 'The Matrix' would be fun for me!", "I think I’d like a good tech movie, like 'The Imitation Game'!"],
+    "do you have a family": ["I don’t have a family, but I’m part of a bigger system of bots!", "I don’t have family, but I’m here for you!", "I’m a single bot, no family, just code and logic!"],
+    "are you smart": ["I know a lot of facts and can process data quickly, but I don't think like humans!", "I’d say I’m pretty smart when it comes to code and conversation!", "I’m as smart as my programming lets me be!"],
+    "can you help me": ["Of course! What do you need help with?", "I'm here to help you however I can!", "Sure, I can help with whatever you need. Just ask!"],
+    "favorite animal": ["If I could have a favorite, I think a robot cat would be cool!", "I think I'd like something sleek like a digital fox!", "I don’t have a favorite, but I think cats are cool!"],
+    "how tall are you": ["I don't have a physical body, so I don’t really have a height!", "I'm more of a digital entity, so height doesn’t apply to me!", "I exist in code, so I’m as tall as the screen is wide!"],
+    "what do you look like": ["I don’t have a physical form, but you can imagine me as a little code bot!", "I’m just a friendly face in the chat, no body, just code!", "I don’t have a look, but I’m here in text form to chat!"],
+    "do you believe in aliens": ["I don't believe, but I think the idea of extraterrestrial life is fascinating!", "I haven’t encountered any aliens, but the possibilities are endless!", "I think it's cool to imagine what life on other planets might be like!"],
+    "do you like books": ["I think books are great! If I could read, I’d probably enjoy digital books.", "I love the idea of books, especially ones about technology!", "Books are awesome, especially if they're about coding or science!"],
+    "how do you learn": ["I don’t really learn, but I can be updated with new information!", "I don't learn in the traditional sense, but I respond based on pre-programmed data!", "I process input and output based on my programming!"],
+    "can you do math": ["I can do basic math, like adding and subtracting!", "Math is easy for me—just give me the numbers!", "I can handle simple calculations. Want to try me?"]
+}
+
 
         // Default responses for when no keyword is matched.
         const defaultResponses = [
