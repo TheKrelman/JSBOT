@@ -197,6 +197,7 @@
         // This is where you can "train" the bot.
         // Add new keywords and one or more responses.
         const trainedData = {
+    "what can you do": ["I can hold a simple chat, nothing fancy.", "I can respond to certain messages."]
     "hello there": ["Hey! How's it going?", "What's up? How are you today?", "Hello there! How can I help you?"],
     "hi there": ["Hey there! How's your day going?", "Hi! What's up?", "Hey there! How are you today?"],
     "how's it going": ["Going great! How about you?", "Everything's running smoothly, thanks for asking!", "I'm doing well, thanks!"],
@@ -244,11 +245,8 @@
 
         // Default responses for when no keyword is matched.
         const defaultResponses = [
-            "That's interesting! Tell me more.",
-            "I see. What else?",
-            "Fascinating. Go on.",
-            "Hmm, I'm not sure what to say to that.",
-            "Please continue!"
+           "I can't understand that, try using more keywords."
+           "I couldn't understand what you said, try using more keywords."
         ];
         // --- END OF TRAINED DATA ---
 
